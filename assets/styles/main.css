@@ -1,0 +1,27 @@
+@import url("https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css");
+
+header {
+    min-height: 80px
+}
+
+aside {
+    padding-top:80px
+}
+
+input[type='checkbox']:checked + span {
+    text-decoration: line-through;
+    color:#b7791f;
+}
+
+.end {
+    -webkit-order: 2;
+    order: 2;
+}
+
+.cover {
+    background-color: rgba(0, 0, 0, 0.4)
+}
+/* 
+.content {
+    width: calc(100% - 6rem)
+} */
