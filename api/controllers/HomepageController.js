@@ -12,8 +12,6 @@ module.exports = {
      * `HomepageController.addItem()`
      */
     addItem: async function (req, res) {
-        console.log(req.body)
-
         let msg = "adicionado pelo server: " + req.body.description
 
         try {
@@ -31,7 +29,6 @@ module.exports = {
      * `HomepageController.validateNote()`
      */
     updateNote: async function (req, res) {
-        console.log(req.body)
         let { name, type, id } = req.body
 
         await Note.update({
@@ -42,20 +39,13 @@ module.exports = {
         })
 
         return res.ok()
-        // if (!name)
-        //     return res.json({valid: false})
-        // if (!type)
-        //     return res.json({valid: false})
-        // return res.json({valid: true})
     },
 
     /**
-     * `HomepageController.createList()`
+     * `HomepageController.createNote()`
      */
-    createList: async function (req, res) {
+    createNote: async function (req, res) {
         let newNote = await Note.create({}).fetch()
-        
-        console.log(newNote.id)
 
         res.json({id: newNote.id})
     },
@@ -64,8 +54,6 @@ module.exports = {
      * `HomepageController.removeItem()`
      */
     removeItem: async function (req, res) {
-        console.log(req.body)
-        
         await Item.destroyOne({
             description: req.body.msg
         })
@@ -74,12 +62,36 @@ module.exports = {
     },
 
     /**
-     * `HomepageController.getLists()`
+     * `HomepageController.getNotes()`
      */
-    getLists: async function (req, res) {
+    getNotes: async function (req, res) {
         let notes = await Note.find().populate('items')
 
         res.send(notes)
     },
+
+    /**
+     * `HomepageController.getNote()`
+     */
+    getNote: async function (req, res) {
+        let note = await Note.findOne({
+            id: req.query.id
+        }).populate('items')
+
+        res.send(note)
+    },
+
+    /**
+     * `HomepageController.toggleItem()`
+     */
+    toggleItem: async function (req, res) {
+        await Item.updateOne({
+            id: req.body.id
+        }, {
+            checked: req.body.value
+        })
+
+        res.ok()
+    }
 };
 

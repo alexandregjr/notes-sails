@@ -22,9 +22,12 @@ module.exports.routes = {
   '/': { view: 'pages/homepage' },
   'POST /addItem': 'HomepageController.addItem',
   'POST /addNote': 'HomepageController.updateNote',
-  'GET /createList': 'HomepageController.createList',
+  'GET /createNote': 'HomepageController.createNote',
   'POST /removeItem': 'HomepageController.removeItem',
-  'GET /getLists': 'HomepageController.getLists',
+  'GET /getNotes': 'HomepageController.getNotes',
+  'GET /getNote': 'HomepageController.getNote',
+  'POST /toggleItem': 'HomepageController.toggleItem'
+
 
 
   /***************************************************************************
