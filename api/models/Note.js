@@ -13,7 +13,7 @@ module.exports = {
         },
         type: {
             type: 'string',
-            defaultsTo: 'list'
+            defaultsTo: 'todo'
         },
         items: {
             collection: 'item',

@@ -5,7 +5,7 @@ Vue.component("List", {
             this.$emit('edit-list', this.id)
         }
     },
-    template: ` <div class="w-1/4 m-5 bg-yellow-400 p-5 flex justify-between flex-wrap rounded" v-on:click="emitEditList">
+    template:  `<div class="w-1/4 m-5 bg-yellow-400 p-5 flex justify-between flex-wrap rounded" v-on:click="emitEditList">
                     <span class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none">{{ name }}</span>
                     <div class="relative w-1/3 flex items-center">
                         <span class="w-full font-bold  appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">{{ type }}</span>
@@ -36,11 +36,11 @@ Vue.component("Item", {
                         <input
                             type="checkbox" 
                             v-model="itemData.checked"
-                            v-on:change="toggleChecked(itemData.description)"
+                            v-on:change="toggleChecked()"
                         ></input>
                         <span class="text-yellow-900">{{ itemData.description }}</span>
                     </div>
-                    <button class="hover:text-yellow-600 focus:text-yellow-600 text-sm px-4 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded" v-on:click="$emit('remove-item', itemData.description)"><strong>X</strong></button>
+                    <button class="hover:text-yellow-600 focus:text-yellow-600 text-sm px-4 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded" v-on:click="$emit('remove-item', itemData.id)"><strong>X</strong></button>
                 </div>`
 })
 
@@ -54,7 +54,7 @@ Vue.component("EditList", {
             newItemDesc     :   "",
             newItemDeadline :   "",
             name            :   "",
-            type            :   "",
+            type            :   "todo",
             id              :   this.listId
         }
     },
@@ -76,16 +76,19 @@ Vue.component("EditList", {
             }
             
             this.newItemDesc = ""
-
-            let item = {}
-            item.description = res.data  
+            
+            // let { data } = res
+            // let item = res.data
+            // item.id = data.id
+            // item.description = data.description
 
             
-            if(this.type === "tarefas") 
-                item.deadline = this.newItemDeadline
+            // if(this.type === "tarefas") 
+            //     item.deadline = this.newItemDeadline
             
-            item.checked = false
-            this.data.push(item);
+            // item.checked = data.checked
+
+            this.data.push(res.data);
             return
         },
         async emitSaveList(){
@@ -100,14 +103,13 @@ Vue.component("EditList", {
             this.$emit("save-list")
         },
         async handleRemove(e){
-            await axios.post('/removeItem', {msg: e})
-            this.data = this.data.filter((item) => item.description !== e)
+            await axios.post('/removeItem', {id: e})
+            this.data = this.data.filter((item) => item.id !== e)
         }
     },
     async beforeMount() {
         let res = await axios.get('/getNote?id=' + this.id)
         let { data } = res
-
         
         this.name = data.title
         this.type = data.type
@@ -117,9 +119,9 @@ Vue.component("EditList", {
                 <div  class="w-1/3 h-1/2 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
                     <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" type="text" placeholder="title" v-model="name"></input>
                     <div class="relative w-1/3">
-                        <select placeholder="type" v-model="type" class="w-full h-full appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">
+                        <select v-model="type" class="w-full h-full appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">
+                            <option selected value="todo">todo</option>
                             <option value="tarefas">tarefas</option>
-                            <option value="todo">todo</option>
                             <option value="nota">nota</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-yellow-800">
@@ -175,6 +177,5 @@ new Vue({
         let res = await axios.get('/getNotes')
 
         this.lists = res.data
-        console.log(this.lists)
     }
 })

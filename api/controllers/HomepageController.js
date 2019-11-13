@@ -13,15 +13,15 @@ module.exports = {
      */
     addItem: async function (req, res) {
         let msg = "adicionado pelo server: " + req.body.description
-
+        let item
         try {
-            await Item.create({description: msg, note: req.body.note})
+            item = await Item.create({description: msg, note: req.body.note}).fetch()
         } catch (err) {
             return res.status(500).send(msg)
         }
         
         
-        return res.send(msg);
+        return res.send(item)
 
     },
 
@@ -55,7 +55,7 @@ module.exports = {
      */
     removeItem: async function (req, res) {
         await Item.destroyOne({
-            description: req.body.msg
+            id: req.body.id
         })
 
         res.ok()
