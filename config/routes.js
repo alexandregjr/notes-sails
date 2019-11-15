@@ -19,14 +19,23 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
+  // views
   '/': { view: 'pages/homepage' },
-  'POST /addItem': 'HomepageController.addItem',
-  'POST /addNote': 'HomepageController.updateNote',
-  'GET /createNote': 'HomepageController.createNote',
-  'POST /removeItem': 'HomepageController.removeItem',
-  'GET /getNotes': 'HomepageController.getNotes',
-  'GET /getNote': 'HomepageController.getNote',
-  'POST /toggleItem': 'HomepageController.toggleItem'
+
+  // items
+  'POST /addItem': 'ItemController.addItem',
+  'DELETE /removeItem': 'ItemController.removeItem',
+  'POST /toggleItem': 'ItemController.toggleItem',
+  'POST /updateItems': 'ItemController.updateItems',
+  'POST /addOrUpdateItem': 'ItemController.addOrUpdateItem',
+
+  // notes
+  'POST /addNote': 'NoteController.updateNote',
+  'POST /updateNoteType': 'NoteController.updateNoteType',
+  'POST /createNote': 'NoteController.createNote',
+  'DELETE /removeNote': 'NoteController.removeNote',
+  'GET /getNotes': 'NoteController.getNotes',
+  'GET /getNote': 'NoteController.getNote',
 
 
 

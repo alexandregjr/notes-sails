@@ -7,19 +7,22 @@
 
 module.exports = {
 
-    attributes: {
-        title: {
-            type: 'string'
-        },
-        type: {
-            type: 'string',
-            defaultsTo: 'todo'
-        },
-        items: {
-            collection: 'item',
-            via: 'note'
-        }
-    },
+  attributes: {
+      title: {
+          type: 'string',
+          columnType: 'varchar(255)'
+      },
+      type: {
+          type: 'string',
+          defaultsTo: 'lista',
+          columnType: 'varchar(20)',
+          isIn: ['lista', 'tarefas', 'nota']
+      },
+      items: {
+          collection: 'item',
+          via: 'note'
+      }
+  },
 
 };
 

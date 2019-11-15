@@ -10,16 +10,21 @@ module.exports = {
     attributes: {
         description: {
             type: 'string',
-            required: true
+            defaultsTo: ''
         },
         checked: {
             type: 'boolean',
             defaultsTo: false
         },
+        ends: {
+            type: 'string',
+            allowNull: true,
+            columnType: 'bigint'
+        },
         note: {
             model: 'note'
         }
-    },
+  },
 
 };
 

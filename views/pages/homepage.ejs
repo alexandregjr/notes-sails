@@ -13,7 +13,7 @@
             <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
             <small class="mb-3">criar</small>
         </button>
-        <button v-else v-on:click="newListEdit" class="focus:shadow-outline outline-none rounded">
+        <button v-else v-on:click="newNoteEdit" class="focus:shadow-outline outline-none rounded">
             <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
             <small class="mb-3">criar</small>
         </button>
@@ -24,21 +24,24 @@
         <small class="mb-3">ordenar</small>
     </aside>
     <div class="flex flex-wrap items-start ml-24 pt-24">
-        <list
-            v-for="list in lists"
-            :id="list.id"
-            :key="list.id"
-            :name="list.title"
-            :type="list.type"
-            :data="list.items"
-            @edit-list="editList"
-        ></list>
+        <note
+            v-for="note in lists"
+            :id="note.id"
+            :key="note.id"
+            :name="note.title"
+            :type="note.type"
+            :data="note.items"
+            @edit-note="editNote"
+            @remove-note="removeNote"
+        ></note>
     </div>
-    <edit-list 
+    <edit-note 
         v-if="editingList"
         :list-id="listId"
-        @save-list="addList"
-    ></edit-list>
+        @save-list="addNote"
+    ></edit-note>
 </div>
+
+
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
