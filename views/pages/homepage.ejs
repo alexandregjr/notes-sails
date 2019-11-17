@@ -5,39 +5,199 @@
             <span class="ml-3">profile</span>
         </div>
         <h1 class="text-3xl font-bold">notes.</h1>
-        <input class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="pesquisar..."/>
+        <input v-model="search" v-on:keyup="searchByTitle" v-on:keydown="searchByTitle" class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="pesquisar..."/>
     </header>
-    <aside class="fixed shadow-lg h-screen bg-white flex flex-col items-center w-24 pt-32">
+    <aside class="w-24 fixed shadow-lg h-screen bg-white flex flex-col items-center pt-32 z-10">
         
         <button v-if="editingList">
             <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
             <small class="mb-3">criar</small>
         </button>
-        <button v-else v-on:click="newListEdit" class="focus:shadow-outline outline-none rounded">
+        <button v-else v-on:click="newNoteEdit" class="focus:shadow-outline focus:outline-none rounded">
             <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
             <small class="mb-3">criar</small>
         </button>
 
-        <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fsvg%2F20151105%2F7614462f8b.png&f=1&nofb=1" height="48" width="48"/>
-        <small class="mb-3">filtrar</small>
-        <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.3ARNjM7sp4lF5A9kzmNzYwHaHm%26pid%3DApi&f=1" height="48" width="48"/>
-        <small class="mb-3">ordenar</small>
+        <div class="relative">
+            <button v-on:click="filterMenu" class="focus:shadow-outline focus:outline-none rounded">
+                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fsvg%2F20151105%2F7614462f8b.png&f=1&nofb=1" height="48" width="48"/>
+                <small class="mb-3">filtrar</small>
+            </button>
+
+            <div v-if="selectingFilter" class="absolute ml-20 left-0 top-0 bg-gray-200 p-4 rounded flex flex-col w-64 text-gray-700">
+                <div class="flex items-center">
+                    <input class="mr-2" v-model="filterType" type="radio" name="sort" value=""> sem filtro
+                </div>
+                <div v-for="(tag, index) in filters" v-if="3 > index" class="flex items-center">
+                    <input class="mr-2" v-model="filterType" type="radio" name="sort" :value="tag.name"> {{ tag.name }}
+                </div>
+                <button v-on:click="filterNotes" class="font-bold p-2 rounded focus:shadow-outline focus:outline-none mt-2">
+                    selecionar
+                </button>
+            </div>
+        </div>
+
+        <div class="relative">
+            <button v-on:click="sortMenu" class="focus:shadow-outline focus:outline-none rounded relative z-20">
+                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.3ARNjM7sp4lF5A9kzmNzYwHaHm%26pid%3DApi&f=1" height="48" width="48"/>
+                <small class="mb-3">ordenar</small>
+            </button>
+    
+            <div v-if="selectingSort" class="absolute ml-20 left-0 top-0 bg-gray-200 p-4 rounded flex flex-col w-64 text-gray-700">
+                <div class="flex items-center">
+                    <input class="mr-2" v-model="sortType" type="radio" name="sort" value="update"> por atualização
+                </div>
+                <div class="flex items-center">
+                    <input class="mr-2"  v-model="sortType" type="radio" name="sort" value="name"> por nome
+                </div>
+                <div class="flex items-center">
+                    <input class="mr-2" v-model="sortType" type="radio" name="sort" value="type"> por tipo
+                </div>
+                <button v-on:click="sortNotes" class="font-bold p-2 rounded focus:shadow-outline focus:outline-none mt-2">
+                    selecionar
+                </button>
+            </div>
+        </div>
     </aside>
-    <div class="flex flex-wrap items-start ml-24 pt-24">
-        <list
-            v-for="list in lists"
-            :id="list.id"
-            :key="list.id"
-            :name="list.title"
-            :type="list.type"
-            :data="list.items"
-        ></list>
+
+    <!-- STANDART -->
+    <div v-if="!search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+            <note
+                v-for="(note, index) in notes"
+                v-if="index % 3 === 0"
+                :id="note.id"
+                :key="note.id"
+                :name="note.title"
+                :type="note.type"
+                :data="note.items"
+                @edit-note="editNote"
+                @remove-note="removeNote"
+            ></note>
+        </div>
+        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+            <note
+                v-for="(note, index) in notes"
+                v-if="index % 3 === 1"
+                :id="note.id"
+                :key="note.id"
+                :name="note.title"
+                :type="note.type"
+                :data="note.items"
+                @edit-note="editNote"
+                @remove-note="removeNote"
+            ></note>
+        </div>
+        <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+            <note
+                v-for="(note, index) in notes"
+                v-if="index % 3 === 2"
+                :id="note.id"
+                :key="note.id"
+                :name="note.title"
+                :type="note.type"
+                :data="note.items"
+                @edit-note="editNote"
+                @remove-note="removeNote"
+            ></note>
+        </div>
     </div>
-    <edit-list 
+
+    <!-- SEARCHING -->
+    <div v-if="search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+            <note
+                v-for="(note, index) in searching"
+                v-if="index % 3 === 0"
+                :id="note.id"
+                :key="note.id"
+                :name="note.title"
+                :type="note.type"
+                :data="note.items"
+                @edit-note="editNote"
+                @remove-note="removeNote"
+            ></note>
+        </div>
+        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+            <note
+                v-for="(note, index) in searching"
+                v-if="index % 3 === 1"
+                :id="note.id"
+                :key="note.id"
+                :name="note.title"
+                :type="note.type"
+                :data="note.items"
+                @edit-note="editNote"
+                @remove-note="removeNote"
+            ></note>
+        </div>
+        <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+            <note
+                v-for="(note, index) in searching"
+                v-if="index % 3 === 2"
+                :id="note.id"
+                :key="note.id"
+                :name="note.title"
+                :type="note.type"
+                :data="note.items"
+                :tags="note.tags"
+                @edit-note="editNote"
+                @remove-note="removeNote"
+            ></note>
+        </div>
+    </div>
+
+    <!-- FILTERING -->
+    <div v-if="!search && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in filtering"
+                    v-if="index % 3 === 0"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in filtering"
+                    v-if="index % 3 === 1"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                <note
+                    v-for="(note, index) in filtering"
+                    v-if="index % 3 === 2"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+        </div>
+    <edit-note 
         v-if="editingList"
-        :list-id="listId"
-        @save-list="addList"
-    ></edit-list>
+        :note-id="noteID"
+        @save-note="addNote"
+        @update-tags="updateTags"
+    ></edit-note>
 </div>
+
+
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
