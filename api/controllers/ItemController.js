@@ -33,10 +33,6 @@ module.exports = {
             note: note
         })
 
-        console.log(item)
-        console.log(req.body)
-        
-        
         if (item.length === 0)
             item = await Item.create(req.body).fetch()
         else
@@ -46,12 +42,6 @@ module.exports = {
             {
                 description: description
             }).fetch()
-        // try {
-        //     item = await Item.create(req.body).fetch()
-        // } catch (err) {
-        //     return res.status(500).send(msg)
-        // }
-        
         
         return res.send(item)
 

@@ -8,7 +8,6 @@ Vue.component("Note", {
             this.$emit('remove-note', this.id)
         },
         timeLeft(end) {
-            // let end = item.ends
             let now = Date.now()
 
             let remain = end - now
@@ -38,9 +37,9 @@ Vue.component("Note", {
                 return Math.floor(secs) + ' segundos restantes'
         }
     },
-    template:  `<div class="w-1/4 m-5 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
+    template:  `<div class="w-full mb-5 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
                     <div class="relative w-full flex items-center">
-                        <span class="w-full bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none">{{ name }}</span>
+                        <span class="w-full bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 pl-0 text-yellow-900 rounded appearance-none">{{ name }}</span>
                         <span class="font-bold  appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">{{ type }}</span>
                         <button v-on:click="emitRemoveNote" class="hover:text-yellow-600 focus:text-yellow-600 text-lg px-2 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded">X</button>
                     </div>

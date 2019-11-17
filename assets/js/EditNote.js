@@ -1,5 +1,5 @@
 Vue.component("EditNote", {
-    props: ["listId"],
+    props: ["noteId"],
     data() {
         return {
             data            :   [],
@@ -7,9 +7,11 @@ Vue.component("EditNote", {
             newItemDesc     :   "",
             newItemDay      :   "",
             newItemHour     :   "",
+            newTag          :   "",
             name            :   "",
+            tags            :   [],
             type            :   "lista",
-            id              :   this.listId
+            id              :   this.noteId
         }
     },
     methods: {
@@ -51,7 +53,7 @@ Vue.component("EditNote", {
             this.data.push(res.data);
             return
         },
-        async emitSaveList(){
+        async emitSaveNote(){
             let e = {
                 id:     this.id,
                 name:   this.name,
@@ -66,7 +68,7 @@ Vue.component("EditNote", {
                     note: this.id
                 })
 
-            this.$emit("save-list")
+            this.$emit("save-note")
         },
         async handleRemove(id){
             await axios.delete('/removeItem?id=' + id)
@@ -85,6 +87,31 @@ Vue.component("EditNote", {
             
             this.type = data.type
             this.data = data.items
+        },
+        async removeTag(id) {
+            let res = await axios.delete('/removeTag?id=' + id + '&note=' + this.id)
+            
+            this.tags = res.data.tags
+            this.$emit('update-tags')
+        },
+        async addTag() {
+            if (!this.newTag)
+                return
+
+            let res = await axios.post('/addTag', {
+                note: this.id,
+                name: this.newTag
+            })
+            
+            this.newTag = ''
+            
+            let { data } = res
+            if (data === 'OK')
+                return
+            
+            this.tags = data.tags
+
+            this.$emit('update-tags')            
         }
     },
     async beforeMount() {
@@ -94,6 +121,7 @@ Vue.component("EditNote", {
         this.name = data.title
         this.type = data.type
         this.data = data.items
+        this.tags = data.tags
 
         if (this.type === 'nota' && this.data[0])
             this.newItemDesc = this.data[0].description
@@ -111,12 +139,12 @@ Vue.component("EditNote", {
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                             </div>
                         </div>
-                        <button v-on:click="emitSaveList" class="hover:text-yellow-600 focus:text-yellow-600 text-lg px-4 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded">X</button>
+                        <button v-on:click="emitSaveNote" class="hover:text-yellow-600 focus:text-yellow-600 text-lg px-4 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded">X</button>
                         <div v-if="type !== 'nota'" class="flex flex-col w-full my-3">
                             <item 
                                 v-for="item in data"
                                 :key="item.id"
-                                :itemData="item"
+                                :item-data="item"
                                 :type="type"
                                 @remove-item="handleRemove"
                             ></item>
@@ -126,10 +154,20 @@ Vue.component("EditNote", {
                             <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" v-if="type === 'tarefas'" type="date" v-model="newItemDay" placeholder="Vencimento da tarefa"></input>
                             <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" v-if="type === 'tarefas'" type="time" v-model="newItemHour" placeholder="Vencimento da tarefa"></input>
                             <button v-if="type !== 'nota'" class="w-1/2 flex-grow hover:text-yellow-600 focus:text-yellow-600 text-yellow-800 focus:shadow-outline focus:outline-none font-bold py-2 px-4 rounded">adicionar item</button> 
-                            <textarea v-if="type === 'nota'" rows="4" v-model="newItemDesc" class="w-full resize-none rounded focus:shadow-outline focus:outline-none bg-transparent text-yellow-900"></textarea>
-                        </form>           
+                        </form>
+                        <textarea v-if="type === 'nota'" rows="4" v-model="newItemDesc" class="w-full resize-none rounded focus:shadow-outline focus:outline-none bg-transparent text-yellow-900 placeholder-yellow-700 p-2 px-4" placeholder="escreva o conteúdo..."></textarea>
+                        <div class="flex w-full flex-wrap">
+                            <tag 
+                                v-for="tag in tags"
+                                :key="tag.id"
+                                :id="tag.id"
+                                :name="tag.name"
+                                @remove-tag="removeTag"
+                            ></tag>
+                            <form v-on:submit.prevent="addTag" class="flex mt-2 w-24">
+                                <input v-model="newTag" type="text" class="w-24 placeholder-yellow-700 focus:shadow-outline focus:outline-none rounded px-4 text-yellow-900 bg-transparent" placeholder="tag">                              
+                            </form>
+                        </div>         
                     </div>
                 </div>`
-
-
 })

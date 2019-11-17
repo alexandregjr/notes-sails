@@ -21,6 +21,10 @@ module.exports = {
       items: {
           collection: 'item',
           via: 'note'
+      },
+      tags: {
+          collection: 'tag',
+          via: 'notes'
       }
   },
 

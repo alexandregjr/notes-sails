@@ -37,7 +37,7 @@ module.exports = {
      */
     getNotes: async function (req, res) {
         // console.log(req)
-        let notes = await Note.find().populate('items')
+        let notes = await Note.find().populate('items').populate('tags')
 
         notes = notes.reverse()
         return res.send(notes)
@@ -49,7 +49,7 @@ module.exports = {
     getNote: async function (req, res) {
         let note = await Note.findOne({
             id: req.query.id
-        }).populate('items')
+        }).populate('items').populate('tags')
 
         return res.send(note)
     },
@@ -67,8 +67,6 @@ module.exports = {
         })
 
         let notes = await Note.find().populate('items')
-
-        notes = notes.reverse()
         return res.send(notes)
     },
 

@@ -37,6 +37,10 @@ module.exports.routes = {
   'GET /getNotes': 'NoteController.getNotes',
   'GET /getNote': 'NoteController.getNote',
 
+  // tags
+  'POST /addTag': 'TagController.addTag',
+  'DELETE /removeTag': 'TagController.removeTag',
+  'GET /getTags': 'TagController.getTags',
 
 
   /***************************************************************************
