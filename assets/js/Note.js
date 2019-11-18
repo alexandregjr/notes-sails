@@ -1,5 +1,5 @@
 Vue.component("Note", {
-    props:  ["id", "name", "type", "data"],
+    props:  ["id", "name", "type", "data", "tags"],
     methods: {
         emitEditNote() {
             this.$emit('edit-note', this.id)
@@ -50,7 +50,11 @@ Vue.component("Note", {
                             :key="item.id"
                             :class="{'end text-yellow-700 line-through break-all': item.checked, 'text-yellow-900 break-all' : !item.checked}"
                         > {{ item.description }} <i class="float-right" v-if="type === 'tarefas'">{{ timeLeft(item.ends) }}</i></li>
-                    </ul>   
+                    </ul>
+                    <div class="flex flex-wrap">
+                        <span v-for="(tag, index) in tags" v-if="3 > index" class="px-2 bg-yellow-500 text-yellow-900 mr-2 rounded-full mb-2">{{ tag.name }}</span>
+                        <span v-if="tags.length > 3" class="text-yellow-900">...</span>
+                    </div>
                     <span v-on:click="emitEditNote" class="w-full text-center font-bold text-yellow-900 cursor-pointer">expandir</span>        
                 </div>`
 })
