@@ -48,14 +48,21 @@ new Vue({
             this.selectingSort = false
         },
         sortNotes() {
-            if (this.sortType === 'update')
-                this.notes.sort(this.sortByUpdate)
-            if (this.sortType === 'name')
-                this.notes.sort(this.sortByName)
-            if (this.sortType === 'type')
-                this.notes.sort(this.sortByType)
-            
-            this.filtering = []
+            if (!this.filterType)
+                if (this.sortType === 'update')
+                    this.notes.sort(this.sortByUpdate)
+                if (this.sortType === 'name')
+                    this.notes.sort(this.sortByName)
+                if (this.sortType === 'type')
+                    this.notes.sort(this.sortByType)
+            else
+                if (this.sortType === 'update')
+                    this.filtering.sort(this.sortByUpdate)
+                if (this.sortType === 'name')
+                    this.filtering.sort(this.sortByName)
+                if (this.sortType === 'type')
+                    this.filtering.sort(this.sortByType)
+
             this.selectingSort = false
         },
         filterNotes() {
