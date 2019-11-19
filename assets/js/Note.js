@@ -43,7 +43,9 @@ Vue.component("Note", {
                         <span class="font-bold  appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">{{ type }}</span>
                         <button v-on:click="emitRemoveNote" class="hover:text-yellow-600 focus:text-yellow-600 text-lg px-2 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded">X</button>
                     </div>
-                    <span v-if="type === 'nota'" class="break-all text-yellow-900 my-3">{{ data[0] ? data[0].description : '' }}</span>
+                    <div v-if="type === 'nota'" class="w-full flex">
+                        <span class="break-all text-yellow-900 my-3">{{ data[0] ? data[0].description : '' }}</span>
+                    </div>
                     <ul v-if="type !== 'nota'" class="flex flex-col w-full my-3 list-disc list-inside px-4">
                         <li
                             v-for="item in data"
@@ -52,8 +54,8 @@ Vue.component("Note", {
                         > {{ item.description }} <i class="float-right" v-if="type === 'tarefas'">{{ timeLeft(item.ends) }}</i></li>
                     </ul>
                     <div class="flex flex-wrap">
-                        <span v-for="(tag, index) in tags" v-if="3 > index" class="px-2 bg-yellow-500 text-yellow-900 mr-2 rounded-full mb-2">{{ tag.name }}</span>
-                        <span v-if="tags.length > 3" class="text-yellow-900">...</span>
+                        <span v-for="(tag, index) in tags" v-if="3 > index" class="break-all px-2 bg-yellow-500 text-yellow-900 mr-2 mb-2" :class="tag.name && tag.name.length > 28 ? 'rounded-lg' : 'rounded-full'">{{ tag.name }}</span>
+                        <span v-if="tags && tags.length     > 3" class="text-yellow-900">...</span>
                     </div>
                     <span v-on:click="emitEditNote" class="w-full text-center font-bold text-yellow-900 cursor-pointer">expandir</span>        
                 </div>`
