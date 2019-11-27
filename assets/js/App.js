@@ -151,11 +151,22 @@ new Vue({
             if(res.status === 200) {
                 console.log("User created");
                 this.submitLogin();
+            } else {
+                console.log(res.data)
             }
         },
         submitLogout() {
             const logout = axios.delete('/auth');
             if(logout){
+                this.authUser = {username: 'profile', none: true};
+                this.userSideBar = 'login';
+            }
+        },
+        async submitDeleteAcc() {
+            const res = await axios.delete('/user');
+            let logout = {data:false};
+            if(res.data) logout = await axios.delete('/auth');
+            if(logout.data) {
                 this.authUser = {username: 'profile', none: true};
                 this.userSideBar = 'login';
             }

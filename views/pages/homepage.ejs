@@ -17,14 +17,16 @@
                 <p class="text-3xl">{{authUser.username}}</p>
                 <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">email: {{authUser.email}}</p>
                 <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-5">Leaving so early? ;C</p>
-                <button v-on:click="submitLogout" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Logout T.T</button>
+                <button v-on:click="submitLogout" class="w-40 outline-none text-center text-gray-600 h-12 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Logout!</button>
+                <p class="text-center max-w-xs text-gray-600 mt-10 mb-5">Don't click this button it's haunted :P</p>
+                <button v-on:click="submitDeleteAcc" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-red-400 rounded-full text-red-700 hover:bg-red-400 hover:text-gray-700" >Delete Account</button>
             </div>
             <div v-if="userSideBar==='login'" class=" m-10 flex flex-col justify-between items-center" >
                 <p v-if="!loginError" class="text-center text-xl text-gray-600 mb-10">Log in to enjoy the full power of notes.!</p>
                 <p v-else class="text-center rounded-full text-xl text-red-600 mb-10">{{loginError}}</p>
                 <input v-model='username' id='1' type="text" placeholder="username" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
                 <input v-model='password' id='2' type="password" placeholder="password" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                <button v-on:click="submitLogin" class="w-40 outline-none text-center text-gray-600 h-12 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Login!</button>
+                <button v-on:click="submitLogin" class="w-40 outline-none text-center text-green-600 h-12 self-center border-4 border-green-400 rounded-full hover:bg-green-400 hover:text-gray-700" >Login!</button>
                 <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">Don't have an account yet?</p>
                 <button v-on:click="showRegister" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Register!</button>
             </div>
@@ -33,7 +35,7 @@
                     <input v-model='username' id='3' type="text" placeholder="username" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
                     <input v-model='email' id='4' type="email" placeholder="email" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
                     <input v-model='password' id='5' type="password" placeholder="password" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                    <button v-on:click="submitRegister" class="w-40 outline-none text-center text-gray-600 h-12 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Register!</button>
+                    <button v-on:click="submitRegister" class="w-40 outline-none text-center text-green-600 h-12 self-center border-4 border-green-400 rounded-full hover:bg-green-400 hover:text-gray-700" >Register!</button>
                     <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">Already have an account?</p>
                     <button v-on:click="showLogin" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Login!</button>
                 </div>
@@ -107,9 +109,11 @@
     </aside>
 
 
-    <div v-if="authUser.none" class="flex flex-col w-full h-screen justify-center items-center">
-        <p class="text-center max-w-md text-3xl mb-5">Log in or create a account to start making your life easier with notes.!</p>
-        <button v-on:click="submitLogout" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Say no more!</button>
+    <div v-if="authUser.none" class="flex relative flex-col w-full h-screen justify-center items-center">
+        <div class="rounded flex w-1/3 h-64 bg-yellow-400 flex-col items-center justify-center">
+            <p class="text-center max-w-md text-3xl mb-5 z-10">Log in or create an account to start making your life easier with notes.!</p>
+            <button v-on:click="submitLogout" class="w-40 outline-none text-center text-xl text-black h-12 self-center border-2 border-black rounded-full hover:bg-black hover:text-yellow-400" >Say no more!</button>
+        </div>
     </div>
     <div v-else>
         <!-- STANDART -->

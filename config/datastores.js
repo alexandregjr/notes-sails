@@ -13,7 +13,7 @@
  * https://sailsjs.com/config/datastores
  */
 
-const { db } = require('./local')
+const { db } = require('./local');
 
 module.exports.datastores = {
 

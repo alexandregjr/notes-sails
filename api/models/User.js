@@ -13,14 +13,17 @@ module.exports = {
 			via		  :	'owner'
 		}
 	},
-
-	beforeCreate() {
+	beforeCreate(rec, proc) {
+		const password = rec.password;
 		bcrypt.genSalt(10, (err, salt) => {
 			if(err || !salt)  return console.log(err);
-			bcrypt.hash(this.password, salt, (err, hash) => {
+			bcrypt.hash(password, salt, (err, hash) => {
 				if(err) return console.log(err);
-				this.password = hash;
+				rec.password = hash;
+				return proc()
 			});
 		});
-	},
+	}
+
+	
 };
