@@ -11,11 +11,13 @@ module.exports = {
         name: {
             type: 'string',
             columnType: 'varchar(255)',
-            unique: true
         },
         notes: {
             collection: 'note',
             via: 'tags'
+        },
+        owner: {
+            model: 'user'
         }
         
     },

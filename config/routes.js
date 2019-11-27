@@ -42,6 +42,16 @@ module.exports.routes = {
   'DELETE /removeTag': 'TagController.removeTag',
   'GET /getTags': 'TagController.getTags',
 
+  // user
+  'POST /user': 'UserController.createUser',
+  'DELETE /user': 'UserController.removeUser',
+
+  // authentication
+  'GET /auth'   : 'AuthController.getAuthUser',
+  'POST /auth'  : 'AuthController.login',
+  'DELETE /auth': 'AuthController.logout',
+
+
 
   /***************************************************************************
   *                                                                          *

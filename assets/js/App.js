@@ -11,12 +11,19 @@ new Vue({
         sortType        :   'update',
         selectingFilter :   false,
         filterType      :   '',
-        search          :   ''
+        search          :   '',
+        authUser        :   '',
+        userSideBar     :   true,
+        username        :   '',
+        password        :   '',
+        email           :   '',
+        loginError      :   false
     },
     methods: {
         async newNoteEdit(){
             let res = await axios.post("/createNote")
-            this.noteID = res.data.id
+            if(!res.data.note) return console.log(res.data.message);
+            this.noteID = res.data.note.id
             this.selectingSort = false
             this.editingList = true
         },
@@ -104,14 +111,73 @@ new Vue({
             let tags = await axios.get('/getTags')
             this.filters = tags.data
             this.filterType = ''
+        },
+        showUserBar() {
+            if(this.authUser.none) this.userSideBar = 'login';
+            else this.userSideBar = 'logout';
+            this.loginError = false;
+        },
+        hideUserBar() {
+            this.userSideBar = false;
+            [this.username, this.password, this.email] = ['', '', ''];
+        },
+        showRegister() {
+            this.userSideBar = 'register';
+            [this.username, this.password, this.email] = ['', '', ''];
+        },
+        showLogin() {
+            this.userSideBar = 'login';
+            [this.username, this.password, this.email] = ['', '', ''];
+            this.loginError = false;
+        },
+        async submitLogin() {
+            const data = (await axios.post('/auth', {
+                username: this.username,
+                password: this.password,
+                email: this.email
+            })).data;
+            if(data.login) {
+                location.reload(true);
+            } else {
+                this.loginError = data.message;
+            }
+        },
+        async submitRegister() {
+            const res = (await axios.post('/user', {
+                username: this.username,
+                password: this.password,
+                email: this.email
+            }));
+            if(res.status === 200) {
+                console.log("User created");
+                this.submitLogin();
+            }
+        },
+        submitLogout() {
+            const logout = axios.delete('/auth');
+            if(logout){
+                this.authUser = {username: 'profile', none: true};
+                this.userSideBar = 'login';
+            }
         }
     },
     async beforeMount() {
-        let notes = await axios.get('/getNotes')
-        let tags = await axios.get('/getTags')
+        //axios.defaults.withCredentials = true;
+        const user = (await axios.get('/auth')).data;
 
-        this.filters = tags.data
-        this.notes = notes.data
-        this.sortNotes()
-    }
+        if(!user) {
+            this.authUser = {username: 'profile', none: true};
+            this.userSideBar = 'login';
+        } else {
+            const notes = await axios.get('/getNotes');
+            const tags = await axios.get('/getTags');
+            this.authUser = user;
+            this.userSideBar = false;
+            this.filters = tags.data;
+            this.notes = notes.data;
+            this.sortNotes();
+        }
+        this.loginError = false;
+        
+    },
 })

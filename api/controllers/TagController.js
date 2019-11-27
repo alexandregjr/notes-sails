@@ -14,11 +14,12 @@ module.exports = {
         let { name } = req.body
 
         let tag = await Tag.findOne({
-            name: name
+            name: name,
+            owner: req.user.id
         })
 
         if (!tag)
-            tag = await Tag.create({name: name}).fetch()
+            tag = await Tag.create({name: name, owner: req.user.id}).fetch()
         
         let note = await Note.findOne({id: req.body.note}).populate('tags')
         for (tagOfNote of note.tags)
@@ -45,7 +46,7 @@ module.exports = {
      * `NoteController.getTags()`
      */
     getTags: async function (req, res) {
-        let tags = await Tag.find().populate('notes')
+        let tags = await Tag.find({owner: req.user.id}).populate('notes');
         tags.sort((a, b) => {
             return b.notes.length - a.notes.length
         })
