@@ -17,23 +17,32 @@ new Vue({
         username        :   '',
         password        :   '',
         email           :   '',
-        loginError      :   false
+        loginError      :   false,
+        loading         :   false
     },
     methods: {
         async newNoteEdit(){
+            this.loading = true
+
             let res = await axios.post("/createNote")
             if(!res.data.note) return console.log(res.data.message);
             this.noteID = res.data.note.id
             this.selectingSort = false
             this.editingList = true
+
+            this.loading = false
         },
         async addNote(){
+            this.loading = true
+
             let res = await axios.get('/getNotes')
 
             this.notes = res.data
             this.sortNotes()
             this.filterNotes()
             this.editingList = false
+
+            this.loading = false
         },
         editNote(id) {
             this.noteID = id
@@ -41,10 +50,14 @@ new Vue({
             this.editingList = true
         },
         async removeNote(id) {
+            this.loading = true
+
             let res = await axios.delete('/removeNote?id=' + id)
 
             this.notes = res.data
             this.sortNotes()
+
+            this.loading = false
         },
         sortMenu() {
             this.selectingSort = !this.selectingSort
@@ -108,9 +121,13 @@ new Vue({
             this.searching = this.notes.filter((item) => item.title.includes(this.search))
         },
         async updateTags() {
+            this.loading = true
+
             let tags = await axios.get('/getTags')
             this.filters = tags.data
             this.filterType = ''
+
+            this.loading = false
         },
         showUserBar() {
             if(this.authUser.none) this.userSideBar = 'login';
@@ -131,53 +148,82 @@ new Vue({
             this.loginError = false;
         },
         async submitLogin() {
+            this.loading = true
+
             const data = (await axios.post('/auth', {
                 username: this.username,
                 password: this.password,
                 email: this.email
             })).data;
             if(data.login) {
-                location.reload(true);
+                console.log(data)
+                this.authUser = data.user
+                this.hideUserBar()
+                const notes = await axios.get('/getNotes')
+                const tags = await axios.get('/getTags')
+                this.filters = tags.data
+                this.notes = notes.data
+                this.sortNotes()
+                // location.reload(true);
             } else {
-                this.loginError = data.message;
+                // console.log(data)
+                this.loginError = "Não foi possivel realizar o login";
             }
+
+            this.loading = false
         },
         async submitRegister() {
+            this.loading = true
+
             const res = (await axios.post('/user', {
                 username: this.username,
                 password: this.password,
                 email: this.email
             }));
             if(res.status === 200) {
-                console.log("User created");
+                // console.log("User created");
                 this.submitLogin();
             } else {
-                console.log(res.data)
+                //error on register 
+                // TODO: print on aside register
+                // console.log(res.data)
             }
+
+            this.loading = false
         },
         submitLogout() {
+            this.loading = true
+
             const logout = axios.delete('/auth');
             if(logout){
-                this.authUser = {username: 'profile', none: true};
+                this.authUser = {username: 'entrar', none: true};
                 this.userSideBar = 'login';
             }
+
+            this.loading = false
         },
         async submitDeleteAcc() {
+            this.loading = true
+
             const res = await axios.delete('/user');
             let logout = {data:false};
             if(res.data) logout = await axios.delete('/auth');
             if(logout.data) {
-                this.authUser = {username: 'profile', none: true};
+                this.authUser = {username: 'entrar', none: true};
                 this.userSideBar = 'login';
             }
+
+            this.loading = false
         }
     },
     async beforeMount() {
         //axios.defaults.withCredentials = true;
+        this.loading = true;
+
         const user = (await axios.get('/auth')).data;
 
         if(!user) {
-            this.authUser = {username: 'profile', none: true};
+            this.authUser = {username: 'entrar', none: true};
             this.userSideBar = 'login';
         } else {
             const notes = await axios.get('/getNotes');
@@ -189,6 +235,8 @@ new Vue({
             this.sortNotes();
         }
         this.loginError = false;
+
+        this.loading = false
         
     },
 })

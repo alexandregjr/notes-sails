@@ -1,264 +1,268 @@
-<div id="root">
-    <header class="flex justify-between items-center shadow-lg fixed bg-white px-10 w-full z-30 h-24">
-        <div class="flex items-center" v-on:click="showUserBar">
-            <img width="32" height="32" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F7e%2FCircle-icons-profile.svg%2F1024px-Circle-icons-profile.svg.png&f=1&nofb=1"/>
-            <span class="ml-3">{{authUser.username}}</span>
-        </div>
-        <h1 class="text-3xl font-bold">notes.</h1>
-        <input v-if="authUser.none" disabled class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="log in to search."/>
-        <input v-else v-model="search" v-on:keyup="searchByTitle" v-on:keydown="searchByTitle" class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="pesquisar..."/>
-    </header>
-    <div v-if="userSideBar" >
-        <div v-on:click="hideUserBar" class="flex w-full h-screen z-10 fixed cover top-0 left-0"> </div>
-        <aside class="w-64 fixed shadow-lg h-screen bg-white flex flex-col items-center pt-32 z-30" >
-            <button v-on:click="hideUserBar" class="absolute outline-none text-xl text-gray-700 " style="top: 20px; left: 220px">X</button>
-            <div v-if="userSideBar==='logout'" class=" m-10 flex flex-col justify-between items-center" >
-                <img width="64" height="64" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F7e%2FCircle-icons-profile.svg%2F1024px-Circle-icons-profile.svg.png&f=1&nofb=1"/>
-                <p class="text-3xl">{{authUser.username}}</p>
-                <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">email: {{authUser.email}}</p>
-                <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-5">Leaving so early? ;C</p>
-                <button v-on:click="submitLogout" class="w-40 outline-none text-center text-gray-600 h-12 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Logout!</button>
-                <p class="text-center max-w-xs text-gray-600 mt-10 mb-5">Don't click this button it's haunted :P</p>
-                <button v-on:click="submitDeleteAcc" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-red-400 rounded-full text-red-700 hover:bg-red-400 hover:text-gray-700" >Delete Account</button>
-            </div>
-            <div v-if="userSideBar==='login'" class=" m-10 flex flex-col justify-between items-center" >
-                <p v-if="!loginError" class="text-center text-xl text-gray-600 mb-10">Log in to enjoy the full power of notes.!</p>
-                <p v-else class="text-center rounded-full text-xl text-red-600 mb-10">{{loginError}}</p>
-                <input v-model='username' id='1' type="text" placeholder="username" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                <input v-model='password' id='2' type="password" placeholder="password" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                <button v-on:click="submitLogin" class="w-40 outline-none text-center text-green-600 h-12 self-center border-4 border-green-400 rounded-full hover:bg-green-400 hover:text-gray-700" >Login!</button>
-                <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">Don't have an account yet?</p>
-                <button v-on:click="showRegister" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Register!</button>
-            </div>
-            <div v-if="userSideBar==='register'" class=" m-10 flex flex-col justify-between items-center" >
-                    <p class="text-center text-xl text-gray-600 mb-10">Create a FREE account and start using notes. NOW!</p>
-                    <input v-model='username' id='3' type="text" placeholder="username" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                    <input v-model='email' id='4' type="email" placeholder="email" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                    <input v-model='password' id='5' type="password" placeholder="password" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
-                    <button v-on:click="submitRegister" class="w-40 outline-none text-center text-green-600 h-12 self-center border-4 border-green-400 rounded-full hover:bg-green-400 hover:text-gray-700" >Register!</button>
-                    <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">Already have an account?</p>
-                    <button v-on:click="showLogin" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Login!</button>
-                </div>
-        </aside>
-    </div> 
-    <aside v-else class="w-24 fixed shadow-lg h-screen bg-white flex flex-col items-center pt-32 z-10">
-        
-        <button v-if="editingList">
-            <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
-            <small class="mb-3">criar</small>
-        </button>
-        <button v-else-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline focus:outline-none rounded">
-                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
-                <small class="mb-3">criar</small>
-        </button>
-        <button v-else v-on:click="newNoteEdit" class="focus:shadow-outline focus:outline-none rounded">
-            <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
-            <small class="mb-3">criar</small>
-        </button>
-
-        <div class="relative">
-            <button v-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline focus:outline-none rounded">
-                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fsvg%2F20151105%2F7614462f8b.png&f=1&nofb=1" height="48" width="48"/>
-                <small class="mb-3">filtrar</small>
-            </button>
-            <button v-else v-on:click="filterMenu" class="focus:shadow-outline focus:outline-none rounded">
-                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fsvg%2F20151105%2F7614462f8b.png&f=1&nofb=1" height="48" width="48"/>
-                <small class="mb-3">filtrar</small>
-            </button>
-
-            <div v-if="selectingFilter" class="absolute ml-20 left-0 top-0 bg-gray-200 p-4 rounded flex flex-col w-64 text-gray-700">
-                <div class="flex items-center">
-                    <input class="mr-2" v-model="filterType" type="radio" name="sort" value=""> sem filtro
-                </div>
-                <div v-for="(tag, index) in filters" v-if="3 > index" class="flex items-center">
-                    <input class="mr-2" v-model="filterType" type="radio" name="sort" :value="tag.name"> {{ tag.name }}
-                </div>
-                <button v-on:click="filterNotes" class="font-bold p-2 rounded focus:shadow-outline focus:outline-none mt-2">
-                    selecionar
-                </button>
-            </div>
-        </div>
-
-        <div class="relative">
-
-            <button v-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline focus:outline-none rounded relative z-20">
-                    <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.3ARNjM7sp4lF5A9kzmNzYwHaHm%26pid%3DApi&f=1" height="48" width="48"/>
-                    <small class="mb-3">ordenar</small>
-            </button>
-
-            <button v-else v-on:click="sortMenu" class="focus:shadow-outline focus:outline-none rounded relative z-20">
-                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.3ARNjM7sp4lF5A9kzmNzYwHaHm%26pid%3DApi&f=1" height="48" width="48"/>
-                <small class="mb-3">ordenar</small>
-            </button>
-    
-            <div v-if="selectingSort" class="absolute ml-20 left-0 top-0 bg-gray-200 p-4 rounded flex flex-col w-64 text-gray-700">
-                <div class="flex items-center">
-                    <input class="mr-2" v-model="sortType" type="radio" name="sort" value="update"> por atualização
-                </div>
-                <div class="flex items-center">
-                    <input class="mr-2"  v-model="sortType" type="radio" name="sort" value="name"> por nome
-                </div>
-                <div class="flex items-center">
-                    <input class="mr-2" v-model="sortType" type="radio" name="sort" value="type"> por tipo
-                </div>
-                <button v-on:click="sortNotes" class="font-bold p-2 rounded focus:shadow-outline focus:outline-none mt-2">
-                    selecionar
-                </button>
-            </div>
-        </div>
-    </aside>
-
-
-    <div v-if="authUser.none" class="flex relative flex-col w-full h-screen justify-center items-center">
-        <div class="rounded flex w-1/3 h-64 bg-yellow-400 flex-col items-center justify-center">
-            <p class="text-center max-w-md text-3xl mb-5 pointer-events-none z-10">Log in or create an account to start making your life easier with notes.!</p>
-            <button v-on:click="submitLogout" class="w-40 outline-none text-center text-xl text-black h-12 self-center border-2 border-black rounded-full hover:bg-black hover:text-yellow-400" >Say no more!</button>
-        </div>
-    </div>
+<div id="root" class="text-gray-700">
+    <div v-if="loading" class="w-full h-screen bg-gray-400 flex items-center justify-center text-gray-800 text-3xl">loading...</div>
     <div v-else>
-        <!-- STANDART -->
-        <div v-if="!search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
-            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-                <note
-                    v-for="(note, index) in notes"
-                    v-if="index % 3 === 0"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
-            </div>
-            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-                <note
-                    v-for="(note, index) in notes"
-                    v-if="index % 3 === 1"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
-            </div>
-            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
-                <note
-                    v-for="(note, index) in notes"
-                    v-if="index % 3 === 2"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
-            </div>
-        </div>
+        <header class="flex justify-between items-center shadow-lg fixed bg-gray-100 px-10 w-full z-30 h-24">
+            <button class="flex items-center focus:outline-none focus:shadow-outline rounded px-3 py-1" v-on:click="showUserBar">
+                <img width="32" height="32" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F7e%2FCircle-icons-profile.svg%2F1024px-Circle-icons-profile.svg.png&f=1&nofb=1"/>
+                <span class="ml-3">{{authUser.username}}</span>
+            </button>
+            <h1 class="text-3xl font-bold">notes.</h1>
+            <input v-if="authUser.none" disabled class="disabled:bg-white disabled:appearance-none mr-3 shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline opacity-0" type="search" placeholder="log in to search."/>
+            <input v-else v-model="search" v-on:keyup="searchByTitle" v-on:keydown="searchByTitle" class="mr-3 shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="pesquisar..."/>
+        </header>
+        <div v-if="userSideBar">
+            
+            <div v-on:click="hideUserBar" class="flex w-full h-screen z-30 fixed cover top-0 left-0"></div>
 
-        <!-- SEARCHING -->
-        <div v-if="search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
-            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-                <note
-                    v-for="(note, index) in searching"
-                    v-if="index % 3 === 0"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
-            </div>
-            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-                <note
-                    v-for="(note, index) in searching"
-                    v-if="index % 3 === 1"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
-            </div>
-            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
-                <note
-                    v-for="(note, index) in searching"
-                    v-if="index % 3 === 2"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
-            </div>
-        </div>
+            <aside class="w-64 fixed shadow-lg h-screen bg-white flex flex-col pt-8 items-center z-40" >
+                <button v-on:click="hideUserBar" class="absolute outline-none text-xl text-gray-700 top-0 right-0 mt-4 mr-4 font-bold px-2 focus:outline-none focus:shadow-outline rounded">X</button>
+                <div v-if="userSideBar==='logout'" class="w-full p-10 flex flex-col justify-between items-center" >
+                    <img width="64" height="64" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F7e%2FCircle-icons-profile.svg%2F1024px-Circle-icons-profile.svg.png&f=1&nofb=1"/>
+                    <p class="text-3xl">{{authUser.username}}</p>
+                    <p class="text-center text-gray-600 break-all">email: {{authUser.email}}</p>
+                    <p class="text-center whitespace-no-wrap mt-10 mb-2">Já vai sair?</p>
+                    <button v-on:click="submitLogout" class="w-full outline-none bg-gray-500 text-center text-white px-4 py-2 rounded hover:bg-gray-700 font-bold focus:outline-none focus:shadow-outline" >sair</button>
+                    <p class="text-center mt-10 mb-2">Não clique nesse botão, ele está amaldiçoado!</p>
+                    <button v-on:click="submitDeleteAcc" class="w-full outline-none bg-red-500 text-center text-white px-4 py-2 rounded hover:bg-red-700 font-bold focus:outline-none focus:shadow-outline" >excluir conta</button>
+                </div>
+                <div v-if="userSideBar==='login'" class="w-full p-10 flex flex-col justify-between items-center" >
+                    <p v-if="!loginError" class="text-center text-xl mb-10">Logue-se para aproveitar todo o poder de <b>notes</b>!</p>
+                    <p v-else class="text-center rounded bg-red-600 px-4 py-2 text-white mb-10">{{loginError}}</p>
+                    <input v-model='username' id='1' type="text" placeholder="usuario" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                    <input v-model='password' id='2' type="password" placeholder="senha" class="px-2 py-1 text-center w-full border-2 rounded mb-5 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                    <button v-on:click="submitLogin" class="w-full outline-none bg-green-500 text-center text-white px-4 py-2 rounded hover:bg-green-700 font-bold focus:outline-none focus:shadow-outline">login</button>
+                    <p class="text-center whitespace-no-wrap mt-10 mb-2">Ainda não tem uma conta?</p>
+                    <button v-on:click="showRegister" class="w-full outline-none bg-blue-500 text-center text-white px-4 py-2 rounded hover:bg-blue-700 font-bold focus:outline-none focus:shadow-outline" >registrar</button>
+                </div>
+                <div v-if="userSideBar==='register'" class="w-full p-10 flex flex-col justify-between items-center" >
+                    <p class="text-center text-xl mb-10">Crie uma conta grátis e comece a usar <b>notes</b> agora!</p>
+                    <input v-model='username' id='3' type="text" placeholder="username" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                    <input v-model='email' id='4' type="email" placeholder="email" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                    <input v-model='password' id='5' type="password" placeholder="password" class="px-2 py-1 text-center w-full border-2 rounded mb-5 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                    <button v-on:click="submitRegister" class="w-full outline-none bg-green-500 text-center text-white px-4 py-2 rounded hover:bg-green-700 font-bold focus:outline-none focus:shadow-outline" >registrar</button>
+                    <p class="text-center whitespace-no-wrap mt-10 mb-2">Já possui uma conta?</p>
+                    <button v-on:click="showLogin" class="w-full outline-none bg-blue-500 text-center text-white px-4 py-2 rounded hover:bg-blue-700 font-bold focus:outline-none focus:shadow-outline" >login</button>
+                </div>
+            </aside>
+        </div> 
+        <aside v-else class="logged w-24 fixed shadow-lg bg-gray-100 h-screen flex flex-col items-center pt-32 z-10">
+            
+            <button class="mb-3" v-if="editingList">
+                <img class="mx-3 mt-3 icon" src="images/add.png" height="40" width="40"/>
+                <small class="mb-3">criar</small>
+            </button>
+            <button v-else-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline mb-3 focus:outline-none rounded">
+                <img class="mx-3 mt-3 icon" src="images/add.png" height="40" width="40"/>
+                <small class="mb-3">criar</small>
+            </button>
+            <button v-else v-on:click="newNoteEdit" class="focus:shadow-outline focus:outline-none mb-3 rounded">
+                <img class="mx-3 mt-3 icon" src="images/add.png" height="40" width="40"/>
+                <small class="mb-3">criar</small>
+            </button>
 
-        <!-- FILTERING -->
-        <div v-if="!search && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
-            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-                <note
-                    v-for="(note, index) in filtering"
-                    v-if="index % 3 === 0"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
+            <div class="relative">
+                <button v-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline mb-3 focus:outline-none rounded">
+                    <img class="mx-3 mt-3 icon" src="images/filter.png" height="40" width="40"/>
+                    <small class="mb-3">filtrar</small>
+                </button>
+                <button v-else v-on:click="filterMenu" class="focus:shadow-outline mb-3 focus:outline-none rounded">
+                    <img class="mx-3 mt-3 icon" src="images/filter.png" height="40" width="40"/>
+                    <small class="mb-3">filtrar</small>
+                </button>
+
+                <div v-if="selectingFilter && !editingList" class="absolute ml-20 left-0 top-0 bg-gray-200 p-4 rounded flex flex-col w-64 text-gray-700">
+                    <div class="flex items-center">
+                        <input class="mr-2" v-model="filterType" type="radio" name="sort" value=""> sem filtro
+                    </div>
+                    <div v-for="(tag, index) in filters" v-if="3 > index" class="flex items-center">
+                        <input class="mr-2" v-model="filterType" type="radio" name="sort" :value="tag.name"> {{ tag.name }}
+                    </div>
+                    <button v-on:click="filterNotes" class="font-bold p-2 rounded focus:shadow-outline focus:outline-none mt-2">
+                        selecionar
+                    </button>
+                </div>
             </div>
-            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-                <note
-                    v-for="(note, index) in filtering"
-                    v-if="index % 3 === 1"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
+
+            <div class="relative">
+                <button v-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline mb-3 focus:outline-none rounded relative z-20">
+                    <img class="mx-3 mt-3 icon" src="images/sort.png" height="40" width="40"/>
+                    <small class="mb-3">ordenar</small>
+                </button>
+
+                <button v-else v-on:click="sortMenu" class="focus:shadow-outline focus:outline-none mb-3 rounded relative z-20">
+                    <img class="mx-3 mt-3 icon" src="images/sort.png" height="40" width="40"/>
+                    <small class="mb-3">ordenar</small>
+                </button>
+        
+                <div v-if="selectingSort && !editingList" class="absolute ml-20 left-0 top-0 bg-gray-200 p-4 rounded flex flex-col w-64 text-gray-700">
+                    <div class="flex items-center">
+                        <input class="mr-2" v-model="sortType" type="radio" name="sort" value="update"> por atualização
+                    </div>
+                    <div class="flex items-center">
+                        <input class="mr-2"  v-model="sortType" type="radio" name="sort" value="name"> por nome
+                    </div>
+                    <div class="flex items-center">
+                        <input class="mr-2" v-model="sortType" type="radio" name="sort" value="type"> por tipo
+                    </div>
+                    <button v-on:click="sortNotes" class="font-bold p-2 rounded focus:shadow-outline focus:outline-none mt-2">
+                        selecionar
+                    </button>
+                </div>
             </div>
-            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
-                <note
-                    v-for="(note, index) in filtering"
-                    v-if="index % 3 === 2"
-                    :id="note.id"
-                    :key="note.id"
-                    :name="note.title"
-                    :type="note.type"
-                    :data="note.items"
-                    :tags="note.tags"
-                    @edit-note="editNote"
-                    @remove-note="removeNote"
-                ></note>
+        </aside>
+
+
+        <div v-if="authUser.none" class="flex relative flex-col w-full h-screen justify-center items-center">
+            <div class="rounded flex w-1/3 h-64 bg-gray-100 shadow-lg flex-col items-center justify-center px-4">
+                <p class="text-center pointer-events-none text-lg mb-5 z-10">Faça login ou crie uma conta para fazer sua vida mais facil com <b>notes</b>!</p>
+                <button v-on:click="submitLogout" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 focus:outline-none focus:shadow-outline text-center rounded font-bold text-white" >entrar</button>
             </div>
         </div>
-        <edit-note 
-            v-if="editingList"
-            :note-id="noteID"
-            @save-note="addNote"
-            @update-tags="updateTags"
-        ></edit-note>
+        <div v-else>
+            <!-- STANDART -->
+            <div v-if="!search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+                <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                    <note
+                        v-for="(note, index) in notes"
+                        v-if="index % 3 === 0"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+                <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                    <note
+                        v-for="(note, index) in notes"
+                        v-if="index % 3 === 1"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+                <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                    <note
+                        v-for="(note, index) in notes"
+                        v-if="index % 3 === 2"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+            </div>
+
+            <!-- SEARCHING -->
+            <div v-if="search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+                <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                    <note
+                        v-for="(note, index) in searching"
+                        v-if="index % 3 === 0"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+                <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                    <note
+                        v-for="(note, index) in searching"
+                        v-if="index % 3 === 1"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+                <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                    <note
+                        v-for="(note, index) in searching"
+                        v-if="index % 3 === 2"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+            </div>
+
+            <!-- FILTERING -->
+            <div v-if="!search && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
+                <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                    <note
+                        v-for="(note, index) in filtering"
+                        v-if="index % 3 === 0"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+                <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                    <note
+                        v-for="(note, index) in filtering"
+                        v-if="index % 3 === 1"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+                <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                    <note
+                        v-for="(note, index) in filtering"
+                        v-if="index % 3 === 2"
+                        :id="note.id"
+                        :key="note.id"
+                        :name="note.title"
+                        :type="note.type"
+                        :data="note.items"
+                        :tags="note.tags"
+                        @edit-note="editNote"
+                        @remove-note="removeNote"
+                    ></note>
+                </div>
+            </div>
+            <edit-note 
+                v-if="editingList"
+                :note-id="noteID"
+                @save-note="addNote"
+                @update-tags="updateTags"
+            ></edit-note>
+        </div>
     </div>  
 </div>
 

@@ -56,7 +56,7 @@ Vue.component("EditNote", {
         async emitSaveNote(){
             let e = {
                 id:     this.id,
-                name:   this.name,
+                name:   this.name.trim(),
                 type:   this.type
             }
 
@@ -126,11 +126,11 @@ Vue.component("EditNote", {
         if (this.type === 'nota' && this.data[0])
             this.newItemDesc = this.data[0].description
     },
-    template:  `<div class="flex items-center justify-center w-full h-screen z-10 fixed cover top-0 left-0">
+    template:  `<div class="flex items-center justify-center w-full h-screen z-30 fixed cover top-0 left-0">
                     <div class="w-1/3 h-1/2 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
-                        <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" type="text" placeholder="title" v-model="name"></input>
+                        <input class="w-1/2 bg-transparent placeholder-yellow-700 border-2 border-yellow-500 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" type="text" placeholder="titulo" v-model="name"></input>
                         <div class="relative w-1/3">
-                            <select v-on:change="changeType" v-model="type" class="w-full h-full appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">
+                            <select v-on:change="changeType" v-model="type" class="w-full h-full border-2 border-yellow-500 appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">
                                 <option value="lista">lista</option>
                                 <option value="tarefas">tarefas</option>
                                 <option value="nota">nota</option>
@@ -141,22 +141,22 @@ Vue.component("EditNote", {
                         </div>
                         <button v-on:click="emitSaveNote" class="hover:text-yellow-600 focus:text-yellow-600 text-lg px-4 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded">X</button>
                         <div v-if="type !== 'nota'" class="flex flex-col w-full my-3">
-                            <item 
-                                v-for="item in data"
-                                :key="item.id"
-                                :item-data="item"
-                                :type="type"
-                                @remove-item="handleRemove"
+                        <item 
+                        v-for="item in data"
+                        :key="item.id"
+                        :item-data="item"
+                        :type="type"
+                        @remove-item="handleRemove"
                             ></item>
                         </div>
-                        <form v-on:submit.prevent="newItem" class="flex items-center justify-between w-full mt-3 flex-wrap">
-                            <input v-if="type !== 'nota'" v-model="newItemDesc" class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" placeholder="nome do item"></input>
-                            <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" v-if="type === 'tarefas'" type="date" v-model="newItemDay" placeholder="Vencimento da tarefa"></input>
-                            <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" v-if="type === 'tarefas'" type="time" v-model="newItemHour" placeholder="Vencimento da tarefa"></input>
-                            <button v-if="type !== 'nota'" class="w-1/2 flex-grow hover:text-yellow-600 focus:text-yellow-600 text-yellow-800 focus:shadow-outline focus:outline-none font-bold py-2 px-4 rounded">adicionar item</button> 
+                        <form v-on:submit.prevent="newItem" class="flex items-stretch justify-between w-full flex-wrap">
+                            <input v-if="type !== 'nota'" v-model="newItemDesc" :class="type ==='tarefas' ? 'mb-2 ' : ''" class="w-1/3 flex-grow mr-2 border-2 border-yellow-500 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" placeholder="nome do item"></input>
+                            <input class="w-1/3 mb-2 flex-grow bg-transparent placeholder-yellow-700 border-2 border-yellow-500 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" v-if="type === 'tarefas'" type="date" v-model="newItemDay" placeholder="Vencimento da tarefa"></input>
+                            <input class="w-1/3 flex-grow mr-2 bg-transparent placeholder-yellow-700 border-2 border-yellow-500 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" v-if="type === 'tarefas'" type="time" v-model="newItemHour" placeholder="Vencimento da tarefa"></input>
+                            <button v-if="type !== 'nota'" class="w-1/3 bg-yellow-500 hover:bg-yellow-600 flex-grow text-yellow-800 focus:shadow-outline focus:outline-none font-bold py-2 px-4 rounded">adicionar item</button> 
                         </form>
-                        <textarea v-if="type === 'nota'" rows="4" v-model="newItemDesc" class="w-full resize-none rounded focus:shadow-outline focus:outline-none bg-transparent text-yellow-900 placeholder-yellow-700 p-2 px-4" placeholder="escreva o conteúdo..."></textarea>
-                        <div class="flex w-full flex-wrap">
+                        <textarea v-if="type === 'nota'" rows="4" v-model="newItemDesc" class="w-full border-2 border-yellow-500 resize-none rounded focus:shadow-outline mt-4 focus:outline-none bg-transparent text-yellow-900 placeholder-yellow-700 p-2 px-4" placeholder="escreva o conteúdo..."></textarea>
+                        <div class="flex w-full flex-wrap mt-2">
                             <tag 
                                 v-for="tag in tags"
                                 :key="tag.id"
@@ -165,7 +165,7 @@ Vue.component("EditNote", {
                                 @remove-tag="removeTag"
                             ></tag>
                             <form v-on:submit.prevent="addTag" class="flex mt-2 w-24">
-                                <input v-model="newTag" type="text" class="w-24 placeholder-yellow-700 focus:shadow-outline focus:outline-none rounded px-4 text-yellow-900 bg-transparent" placeholder="tag">                              
+                                <input v-model="newTag" type="text" class="w-24 border-2 border-yellow-500 placeholder-yellow-700 focus:shadow-outline focus:outline-none rounded px-4 text-yellow-900 bg-transparent" placeholder="tag">                              
                             </form>
                         </div>         
                     </div>

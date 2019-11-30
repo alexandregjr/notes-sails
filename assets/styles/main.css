@@ -4,9 +4,9 @@ header {
     min-height: 80px
 }
 
-aside {
-    padding-top:80px
-}
+/* aside.logged {
+    padding-top:16rem
+} */
 
 input[type='checkbox']:checked + span {
     text-decoration: line-through;
@@ -25,3 +25,7 @@ input[type='checkbox']:checked + span {
 .content {
     width: calc(100% - 6rem)
 } */
+
+.icon {
+    filter: invert(15%) sepia(4%) saturate(6174%) hue-rotate(180deg) brightness(94%) contrast(80%)
+}

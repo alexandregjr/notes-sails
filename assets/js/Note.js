@@ -10,8 +10,11 @@ Vue.component("Note", {
         timeLeft(end) {
             let now = Date.now()
 
+            if (end < 0)
+                return "acabou"
+            
             let remain = end - now
-
+            
             if (remain < 0) 
                 return "acabou"
 
@@ -39,24 +42,27 @@ Vue.component("Note", {
     },
     template:  `<div class="w-full mb-5 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
                     <div class="relative w-full flex items-center">
-                        <span class="w-full bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 pl-0 text-yellow-900 rounded appearance-none">{{ name }}</span>
+                        <span class="w-full bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 pl-0 rounded appearance-none" :class="name.trim() === '' ? 'text-yellow-700 italic' : 'text-yellow-900'">{{ name.trim() === '' ? 'sem titulo' : name}}</span>
                         <span class="font-bold  appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">{{ type }}</span>
                         <button v-on:click="emitRemoveNote" class="hover:text-yellow-600 focus:text-yellow-600 text-lg px-2 font-bold text-yellow-900 focus:outline-none focus:shadow-outline rounded">X</button>
                     </div>
                     <div v-if="type === 'nota'" class="w-full flex">
-                        <span class="break-all text-yellow-900 my-3">{{ data[0] ? data[0].description : '' }}</span>
+                        <span class="break-all my-3" :class="data[0] && data[0].description.trim() ? 'text-yellow-900' : 'text-yellow-700 italic'">{{ data[0] && data[0].description.trim() ? data[0].description : 'sem conteudo' }}</span>
                     </div>
-                    <ul v-if="type !== 'nota'" class="flex flex-col w-full my-3 list-disc list-inside px-4">
+                    <ul v-if="type !== 'nota' && data.length > 0" class="flex flex-col w-full my-3 list-disc list-inside px-4">
                         <li
                             v-for="item in data"
                             :key="item.id"
                             :class="{'end text-yellow-700 line-through break-all': item.checked, 'text-yellow-900 break-all' : !item.checked}"
                         > {{ item.description }} <i class="float-right" v-if="type === 'tarefas'">{{ timeLeft(item.ends) }}</i></li>
                     </ul>
-                    <div class="flex flex-wrap">
-                        <span v-for="(tag, index) in tags" v-if="3 > index" class="break-all px-2 bg-yellow-500 text-yellow-900 mr-2 mb-2" :class="tag.name && tag.name.length > 28 ? 'rounded-lg' : 'rounded-full'">{{ tag.name }}</span>
-                        <span v-if="tags && tags.length     > 3" class="text-yellow-900">...</span>
+                    <div v-if="type !== 'nota' && data.length === 0" class="w-full flex">
+                        <span class="break-all text-yellow-700 italic my-3" >sem conteudo</span>
                     </div>
-                    <span v-on:click="emitEditNote" class="w-full text-center font-bold text-yellow-900 cursor-pointer">expandir</span>        
+                    <div v-if="tags.length > 0" class="flex flex-wrap">
+                        <span v-for="(tag, index) in tags" v-if="3 > index" class="break-all px-2 bg-yellow-500 text-yellow-900 mr-2 mb-2" :class="tag.name && tag.name.length > 28 ? 'rounded-lg' : 'rounded-full'">{{ tag.name }}</span>
+                        <span v-if="tags && tags.length > 3" class="text-yellow-700">...</span>
+                    </div>
+                    <button v-on:click="emitEditNote" class="w-full text-center font-bold text-yellow-900 cursor-pointer focus:outline-none focus:shadow-outline py-2 mt-2 bg-yellow-500 rounded hover:bg-yellow-600">expandir</button>        
                 </div>`
 })
