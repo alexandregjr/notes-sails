@@ -27,9 +27,14 @@ module.exports = {
      * `NoteController.createNote()`
      */
     createNote: async function (req, res) {
-        let note = await Note.create({}).fetch()
+        let note;
+        try{
+            note = await Note.create({owner: req.user.id}).fetch()
+        } catch(e) {
+            return res.send({message: 'Could not create note', note: false});
+        }
 
-        return res.send(note)
+        return res.send({messsage: 'Note created succesfully', note});
     },
 
     /**
@@ -37,7 +42,7 @@ module.exports = {
      */
     getNotes: async function (req, res) {
         // console.log(req)
-        let notes = await Note.find().populate('items').populate('tags')
+        let notes = await Note.find({owner: req.user.id}).populate('items').populate('tags')
 
         notes = notes.reverse()
         return res.send(notes)
@@ -66,7 +71,7 @@ module.exports = {
             id: req.query.id
         })
 
-        let notes = await Note.find().populate('items')
+        let notes = await Note.find({owner: req.user.id}).populate('items')
         return res.send(notes)
     },
 

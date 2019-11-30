@@ -1,17 +1,55 @@
 <div id="root">
     <header class="flex justify-between items-center shadow-lg fixed bg-white px-10 w-full z-30 h-24">
-        <div class="flex items-center">
+        <div class="flex items-center" v-on:click="showUserBar">
             <img width="32" height="32" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F7e%2FCircle-icons-profile.svg%2F1024px-Circle-icons-profile.svg.png&f=1&nofb=1"/>
-            <span class="ml-3">profile</span>
+            <span class="ml-3">{{authUser.username}}</span>
         </div>
         <h1 class="text-3xl font-bold">notes.</h1>
-        <input v-model="search" v-on:keyup="searchByTitle" v-on:keydown="searchByTitle" class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="pesquisar..."/>
+        <input v-if="authUser.none" disabled class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="log in to search."/>
+        <input v-else v-model="search" v-on:keyup="searchByTitle" v-on:keydown="searchByTitle" class="shadow appearance-none rounded-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="search" placeholder="pesquisar..."/>
     </header>
-    <aside class="w-24 fixed shadow-lg h-screen bg-white flex flex-col items-center pt-32 z-10">
+    <div v-if="userSideBar" >
+        <div v-on:click="hideUserBar" class="flex w-full h-screen z-10 fixed cover top-0 left-0"> </div>
+        <aside class="w-64 fixed shadow-lg h-screen bg-white flex flex-col items-center pt-32 z-30" >
+            <button v-on:click="hideUserBar" class="absolute outline-none text-xl text-gray-700 " style="top: 20px; left: 220px">X</button>
+            <div v-if="userSideBar==='logout'" class=" m-10 flex flex-col justify-between items-center" >
+                <img width="64" height="64" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F7e%2FCircle-icons-profile.svg%2F1024px-Circle-icons-profile.svg.png&f=1&nofb=1"/>
+                <p class="text-3xl">{{authUser.username}}</p>
+                <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">email: {{authUser.email}}</p>
+                <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-5">Leaving so early? ;C</p>
+                <button v-on:click="submitLogout" class="w-40 outline-none text-center text-gray-600 h-12 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Logout!</button>
+                <p class="text-center max-w-xs text-gray-600 mt-10 mb-5">Don't click this button it's haunted :P</p>
+                <button v-on:click="submitDeleteAcc" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-red-400 rounded-full text-red-700 hover:bg-red-400 hover:text-gray-700" >Delete Account</button>
+            </div>
+            <div v-if="userSideBar==='login'" class=" m-10 flex flex-col justify-between items-center" >
+                <p v-if="!loginError" class="text-center text-xl text-gray-600 mb-10">Log in to enjoy the full power of notes.!</p>
+                <p v-else class="text-center rounded-full text-xl text-red-600 mb-10">{{loginError}}</p>
+                <input v-model='username' id='1' type="text" placeholder="username" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
+                <input v-model='password' id='2' type="password" placeholder="password" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
+                <button v-on:click="submitLogin" class="w-40 outline-none text-center text-green-600 h-12 self-center border-4 border-green-400 rounded-full hover:bg-green-400 hover:text-gray-700" >Login!</button>
+                <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">Don't have an account yet?</p>
+                <button v-on:click="showRegister" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Register!</button>
+            </div>
+            <div v-if="userSideBar==='register'" class=" m-10 flex flex-col justify-between items-center" >
+                    <p class="text-center text-xl text-gray-600 mb-10">Create a FREE account and start using notes. NOW!</p>
+                    <input v-model='username' id='3' type="text" placeholder="username" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
+                    <input v-model='email' id='4' type="email" placeholder="email" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
+                    <input v-model='password' id='5' type="password" placeholder="password" class="text-center w-32 border-b-2 mb-5 text-gray-700 border-gray-500 focus:border-black focus:text-black"/>
+                    <button v-on:click="submitRegister" class="w-40 outline-none text-center text-green-600 h-12 self-center border-4 border-green-400 rounded-full hover:bg-green-400 hover:text-gray-700" >Register!</button>
+                    <p class="text-center text-gray-600 whitespace-no-wrap mt-10 mb-2">Already have an account?</p>
+                    <button v-on:click="showLogin" class="w-32 outline-none text-center text-gray-600 h-10 self-center border-4 border-gray-400 rounded-full text-gray-700 hover:bg-gray-400 hover:text-white" >Login!</button>
+                </div>
+        </aside>
+    </div> 
+    <aside v-else class="w-24 fixed shadow-lg h-screen bg-white flex flex-col items-center pt-32 z-10">
         
         <button v-if="editingList">
             <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
             <small class="mb-3">criar</small>
+        </button>
+        <button v-else-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline focus:outline-none rounded">
+                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
+                <small class="mb-3">criar</small>
         </button>
         <button v-else v-on:click="newNoteEdit" class="focus:shadow-outline focus:outline-none rounded">
             <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fimg.icons8.com%2Fmetro%2F1600%2Fplus-math.png&f=1&nofb=1" height="48" width="48"/>
@@ -19,7 +57,11 @@
         </button>
 
         <div class="relative">
-            <button v-on:click="filterMenu" class="focus:shadow-outline focus:outline-none rounded">
+            <button v-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline focus:outline-none rounded">
+                <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fsvg%2F20151105%2F7614462f8b.png&f=1&nofb=1" height="48" width="48"/>
+                <small class="mb-3">filtrar</small>
+            </button>
+            <button v-else v-on:click="filterMenu" class="focus:shadow-outline focus:outline-none rounded">
                 <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fsvg%2F20151105%2F7614462f8b.png&f=1&nofb=1" height="48" width="48"/>
                 <small class="mb-3">filtrar</small>
             </button>
@@ -38,7 +80,13 @@
         </div>
 
         <div class="relative">
-            <button v-on:click="sortMenu" class="focus:shadow-outline focus:outline-none rounded relative z-20">
+
+            <button v-if="authUser.none" v-on:click="showLogin" class="focus:shadow-outline focus:outline-none rounded relative z-20">
+                    <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.3ARNjM7sp4lF5A9kzmNzYwHaHm%26pid%3DApi&f=1" height="48" width="48"/>
+                    <small class="mb-3">ordenar</small>
+            </button>
+
+            <button v-else v-on:click="sortMenu" class="focus:shadow-outline focus:outline-none rounded relative z-20">
                 <img class="mx-3 mt-3" src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.3ARNjM7sp4lF5A9kzmNzYwHaHm%26pid%3DApi&f=1" height="48" width="48"/>
                 <small class="mb-3">ordenar</small>
             </button>
@@ -60,149 +108,158 @@
         </div>
     </aside>
 
-    <!-- STANDART -->
-    <div v-if="!search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
-        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-            <note
-                v-for="(note, index) in notes"
-                v-if="index % 3 === 0"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
-        </div>
-        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-            <note
-                v-for="(note, index) in notes"
-                v-if="index % 3 === 1"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
-        </div>
-        <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
-            <note
-                v-for="(note, index) in notes"
-                v-if="index % 3 === 2"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
-        </div>
-    </div>
 
-    <!-- SEARCHING -->
-    <div v-if="search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
-        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-            <note
-                v-for="(note, index) in searching"
-                v-if="index % 3 === 0"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
-        </div>
-        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-            <note
-                v-for="(note, index) in searching"
-                v-if="index % 3 === 1"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
-        </div>
-        <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
-            <note
-                v-for="(note, index) in searching"
-                v-if="index % 3 === 2"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
+    <div v-if="authUser.none" class="flex relative flex-col w-full h-screen justify-center items-center">
+        <div class="rounded flex w-1/3 h-64 bg-yellow-400 flex-col items-center justify-center">
+            <p class="text-center max-w-md text-3xl mb-5 pointer-events-none z-10">Log in or create an account to start making your life easier with notes.!</p>
+            <button v-on:click="submitLogout" class="w-40 outline-none text-center text-xl text-black h-12 self-center border-2 border-black rounded-full hover:bg-black hover:text-yellow-400" >Say no more!</button>
         </div>
     </div>
+    <div v-else>
+        <!-- STANDART -->
+        <div v-if="!search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in notes"
+                    v-if="index % 3 === 0"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in notes"
+                    v-if="index % 3 === 1"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                <note
+                    v-for="(note, index) in notes"
+                    v-if="index % 3 === 2"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+        </div>
 
-    <!-- FILTERING -->
-    <div v-if="!search && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
-        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-            <note
-                v-for="(note, index) in filtering"
-                v-if="index % 3 === 0"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
+        <!-- SEARCHING -->
+        <div v-if="search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in searching"
+                    v-if="index % 3 === 0"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in searching"
+                    v-if="index % 3 === 1"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                <note
+                    v-for="(note, index) in searching"
+                    v-if="index % 3 === 2"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
         </div>
-        <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
-            <note
-                v-for="(note, index) in filtering"
-                v-if="index % 3 === 1"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
+
+        <!-- FILTERING -->
+        <div v-if="!search && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in filtering"
+                    v-if="index % 3 === 0"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
+                <note
+                    v-for="(note, index) in filtering"
+                    v-if="index % 3 === 1"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
+            <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
+                <note
+                    v-for="(note, index) in filtering"
+                    v-if="index % 3 === 2"
+                    :id="note.id"
+                    :key="note.id"
+                    :name="note.title"
+                    :type="note.type"
+                    :data="note.items"
+                    :tags="note.tags"
+                    @edit-note="editNote"
+                    @remove-note="removeNote"
+                ></note>
+            </div>
         </div>
-        <div class="w-1/4 flex flex-col ml-5 mt-5 mr-5 flex-grow">
-            <note
-                v-for="(note, index) in filtering"
-                v-if="index % 3 === 2"
-                :id="note.id"
-                :key="note.id"
-                :name="note.title"
-                :type="note.type"
-                :data="note.items"
-                :tags="note.tags"
-                @edit-note="editNote"
-                @remove-note="removeNote"
-            ></note>
-        </div>
-    </div>
-    <edit-note 
-        v-if="editingList"
-        :note-id="noteID"
-        @save-note="addNote"
-        @update-tags="updateTags"
-    ></edit-note>
+        <edit-note 
+            v-if="editingList"
+            :note-id="noteID"
+            @save-note="addNote"
+            @update-tags="updateTags"
+        ></edit-note>
+    </div>  
 </div>
 
 

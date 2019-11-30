@@ -60,7 +60,7 @@ Vue.component("EditNote", {
                 type:   this.type
             }
 
-            await axios.post('/addNote', e)
+            await axios.post('/addNote', e);
             
             if (this.type === 'nota') 
                 await axios.post('/addOrUpdateItem', {
@@ -127,7 +127,7 @@ Vue.component("EditNote", {
             this.newItemDesc = this.data[0].description
     },
     template:  `<div class="flex items-center justify-center w-full h-screen z-10 fixed cover top-0 left-0">
-                    <div  class="w-1/3 h-1/2 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
+                    <div class="w-1/3 h-1/2 bg-yellow-400 p-5 flex justify-between flex-wrap rounded">
                         <input class="w-1/2 bg-transparent placeholder-yellow-700 focus:shadow-outline focus:outline-none p-2 px-4 text-yellow-900 rounded appearance-none" type="text" placeholder="title" v-model="name"></input>
                         <div class="relative w-1/3">
                             <select v-on:change="changeType" v-model="type" class="w-full h-full appearance-none focus:outline-none focus:shadow-outline bg-transparent px-4 text-yellow-900 rounded">

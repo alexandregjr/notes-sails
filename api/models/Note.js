@@ -25,6 +25,9 @@ module.exports = {
         tags: {
             collection: 'tag',
             via: 'notes'
+        },
+        owner: {
+            model: 'user'
         }
   },
 
