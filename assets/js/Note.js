@@ -49,17 +49,17 @@ Vue.component("Note", {
                     <div v-if="type === 'nota'" class="w-full flex">
                         <span class="break-all my-3" :class="data[0] && data[0].description.trim() ? 'text-yellow-900' : 'text-yellow-700 italic'">{{ data[0] && data[0].description.trim() ? data[0].description : 'sem conteudo' }}</span>
                     </div>
-                    <ul v-if="type !== 'nota' && data.length > 0" class="flex flex-col w-full my-3 list-disc list-inside px-4">
+                    <ul v-if="type !== 'nota' && data && data.length > 0" class="flex flex-col w-full my-3 list-disc list-inside px-4">
                         <li
                             v-for="item in data"
                             :key="item.id"
                             :class="{'end text-yellow-700 line-through break-all': item.checked, 'text-yellow-900 break-all' : !item.checked}"
                         > {{ item.description }} <i class="float-right" v-if="type === 'tarefas'">{{ timeLeft(item.ends) }}</i></li>
                     </ul>
-                    <div v-if="type !== 'nota' && data.length === 0" class="w-full flex">
+                    <div v-if="type !== 'nota' && data && data.length === 0" class="w-full flex">
                         <span class="break-all text-yellow-700 italic my-3" >sem conteudo</span>
                     </div>
-                    <div v-if="tags.length > 0" class="flex flex-wrap">
+                    <div v-if="tags && tags.length > 0" class="flex flex-wrap">
                         <span v-for="(tag, index) in tags" v-if="3 > index" class="break-all px-2 bg-yellow-500 text-yellow-900 mr-2 mb-2" :class="tag.name && tag.name.length > 28 ? 'rounded-lg' : 'rounded-full'">{{ tag.name }}</span>
                         <span v-if="tags && tags.length > 3" class="text-yellow-700">...</span>
                     </div>

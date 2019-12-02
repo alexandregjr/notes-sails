@@ -21,25 +21,29 @@
                     <p class="text-3xl">{{authUser.username}}</p>
                     <p class="text-center text-gray-600 break-all">email: {{authUser.email}}</p>
                     <p class="text-center whitespace-no-wrap mt-10 mb-2">Já vai sair?</p>
-                    <button v-on:click="submitLogout" class="w-full outline-none bg-gray-500 text-center text-white px-4 py-2 rounded hover:bg-gray-700 font-bold focus:outline-none focus:shadow-outline" >sair</button>
+                    <button v-on:click="submitLogout" class="w-full outline-none bg-red-500 text-center text-white px-4 py-2 rounded hover:bg-red-700 font-bold focus:outline-none focus:shadow-outline" >sair</button>
                     <p class="text-center mt-10 mb-2">Não clique nesse botão, ele está amaldiçoado!</p>
-                    <button v-on:click="submitDeleteAcc" class="w-full outline-none bg-red-500 text-center text-white px-4 py-2 rounded hover:bg-red-700 font-bold focus:outline-none focus:shadow-outline" >excluir conta</button>
+                    <button v-on:click="submitDeleteAcc" class="w-full outline-none bg-gray-500 text-center text-white px-4 py-2 rounded hover:bg-gray-700 font-bold focus:outline-none focus:shadow-outline" >excluir conta</button>
                 </div>
                 <div v-if="userSideBar==='login'" class="w-full p-10 flex flex-col justify-between items-center" >
                     <p v-if="!loginError" class="text-center text-xl mb-10">Logue-se para aproveitar todo o poder de <b>notes</b>!</p>
                     <p v-else class="text-center rounded bg-red-600 px-4 py-2 text-white mb-10">{{loginError}}</p>
-                    <input v-model='username' id='1' type="text" placeholder="usuario" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
-                    <input v-model='password' id='2' type="password" placeholder="senha" class="px-2 py-1 text-center w-full border-2 rounded mb-5 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
-                    <button v-on:click="submitLogin" class="w-full outline-none bg-green-500 text-center text-white px-4 py-2 rounded hover:bg-green-700 font-bold focus:outline-none focus:shadow-outline">login</button>
+                    <form v-on:submit.prevent="submitLogin">
+                        <input v-model='username' id='1' type="text" placeholder="usuario" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                        <input v-model='password' id='2' type="password" placeholder="senha" class="px-2 py-1 text-center w-full border-2 rounded mb-5 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                        <button class="w-full outline-none bg-green-500 text-center text-white px-4 py-2 rounded hover:bg-green-700 font-bold focus:outline-none focus:shadow-outline">login</button>
+                    </form>
                     <p class="text-center whitespace-no-wrap mt-10 mb-2">Ainda não tem uma conta?</p>
                     <button v-on:click="showRegister" class="w-full outline-none bg-blue-500 text-center text-white px-4 py-2 rounded hover:bg-blue-700 font-bold focus:outline-none focus:shadow-outline" >registrar</button>
                 </div>
                 <div v-if="userSideBar==='register'" class="w-full p-10 flex flex-col justify-between items-center" >
                     <p class="text-center text-xl mb-10">Crie uma conta grátis e comece a usar <b>notes</b> agora!</p>
-                    <input v-model='username' id='3' type="text" placeholder="username" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
-                    <input v-model='email' id='4' type="email" placeholder="email" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
-                    <input v-model='password' id='5' type="password" placeholder="password" class="px-2 py-1 text-center w-full border-2 rounded mb-5 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
-                    <button v-on:click="submitRegister" class="w-full outline-none bg-green-500 text-center text-white px-4 py-2 rounded hover:bg-green-700 font-bold focus:outline-none focus:shadow-outline" >registrar</button>
+                    <form v-on:submit.prevent="submitRegister">
+                        <input v-model='username' id='3' type="text" placeholder="username" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                        <input v-model='email' id='4' type="email" placeholder="email" class="px-2 py-1 text-center w-full border-2 rounded mb-2 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                        <input v-model='password' id='5' type="password" placeholder="password" class="px-2 py-1 text-center w-full border-2 rounded mb-5 placeholder-gray-500 border-gray-500 focus:border-gray-800 focus:text-gray-800 focus:outline-none focus:shadow-outline"/>
+                        <button class="w-full outline-none bg-green-500 text-center text-white px-4 py-2 rounded hover:bg-green-700 font-bold focus:outline-none focus:shadow-outline" >registrar</button>
+                    </form>
                     <p class="text-center whitespace-no-wrap mt-10 mb-2">Já possui uma conta?</p>
                     <button v-on:click="showLogin" class="w-full outline-none bg-blue-500 text-center text-white px-4 py-2 rounded hover:bg-blue-700 font-bold focus:outline-none focus:shadow-outline" >login</button>
                 </div>
@@ -120,7 +124,7 @@
         </div>
         <div v-else>
             <!-- STANDART -->
-            <div v-if="!search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div v-if="!search && filtering && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
                 <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
                     <note
                         v-for="(note, index) in notes"
@@ -166,7 +170,7 @@
             </div>
 
             <!-- SEARCHING -->
-            <div v-if="search && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div v-if="search && filtering && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
                 <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
                     <note
                         v-for="(note, index) in searching"
@@ -212,7 +216,7 @@
             </div>
 
             <!-- FILTERING -->
-            <div v-if="!search && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div v-if="!search && filtering && filtering.length !== 0" class="flex flex-wrap items-start ml-24 pt-24">
                 <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
                     <note
                         v-for="(note, index) in filtering"

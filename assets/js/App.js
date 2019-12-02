@@ -55,6 +55,7 @@ new Vue({
             let res = await axios.delete('/removeNote?id=' + id)
 
             this.notes = res.data
+
             this.sortNotes()
 
             this.loading = false
@@ -156,7 +157,7 @@ new Vue({
                 email: this.email
             })).data;
             if(data.login) {
-                console.log(data)
+                // console.log(data)
                 this.authUser = data.user
                 this.hideUserBar()
                 const notes = await axios.get('/getNotes')
@@ -218,7 +219,7 @@ new Vue({
     },
     async beforeMount() {
         //axios.defaults.withCredentials = true;
-        this.loading = true;
+        this.loading = true
 
         const user = (await axios.get('/auth')).data;
 

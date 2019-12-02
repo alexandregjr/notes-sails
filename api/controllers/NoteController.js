@@ -63,6 +63,13 @@ module.exports = {
      * `NoteController.removeNote()`
      */
     removeNote: async function (req, res) {
+        let tags = await Tag.find({owner: req.user.id})
+        tags = tags.map((tag) => {
+            return tag.id
+        })
+
+        await Note.removeFromCollection(req.query.id, 'tags', tags)
+
         await Item.destroy({
             note: req.query.id
         })
@@ -70,8 +77,9 @@ module.exports = {
         await Note.destroyOne({
             id: req.query.id
         })
+        
 
-        let notes = await Note.find({owner: req.user.id}).populate('items')
+        let notes = await Note.find({owner: req.user.id}).populate('items').populate('tags')
         return res.send(notes)
     },
 

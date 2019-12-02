@@ -97,6 +97,20 @@ Vue.component("EditNote", {
         async addTag() {
             if (!this.newTag)
                 return
+            
+            let e = {
+                id:     this.id,
+                name:   this.name.trim(),
+                type:   this.type
+            }
+
+            await axios.post('/addNote', e);
+            
+            if (this.type === 'nota') 
+                await axios.post('/addOrUpdateItem', {
+                    description: this.newItemDesc,
+                    note: this.id
+                })
 
             let res = await axios.post('/addTag', {
                 note: this.id,
@@ -114,7 +128,7 @@ Vue.component("EditNote", {
             this.$emit('update-tags')            
         }
     },
-    async beforeMount() {
+    async beforeMount() {        
         let res = await axios.get('/getNote?id=' + this.id)
         let { data } = res
         
