@@ -2,6 +2,16 @@
 
 Sistema de criação de anotações. [Link do projeto.](https://github.com/alexandregjr/notes-sails)
 
+### Dependências
+Para executar o programa é necessário possuir o passport, o postegres para sails e o axios.
+Para instalar basta executar:
+
+```shell
+> npm install sails-postgresql
+> npm install passport
+> npm install axios
+```
+
 ### Como executar
 
 Para a execução desse sistema, siga o seguinte passo a passo:
