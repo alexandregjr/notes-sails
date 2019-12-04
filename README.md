@@ -1,6 +1,6 @@
 # notes-sails
 
-Sistema de criação de anotações.
+Sistema de criação de anotações. [Link do projeto.](https://github.com/alexandregjr/notes-sails)
 
 ### Como executar
 
@@ -40,6 +40,11 @@ Em caso de erro ao executar *sails lift*, tentar executar
 ```
 para o que a DB seja resetada.
 Esse erro provavelmente ocorre porque a db já contém constraints e o waterline não as reconhece. Se as constraints de fk não fossem adicionadas, o sails rodaria normalmente com a db populada.
+
+### Colaboradores
+Alexandre Galocha Pinto Júnior (10734706) [git](https://github.com/alexandregjr)
+Eduardo Pirro (10734665) [git](https://github.com/EdPirro)
+
 
 <!-- Internally, Sails used [`sails-generate@1.16.13`](https://github.com/balderdashy/sails-generate/tree/v1.16.13/lib/core-generators/new). -->
 
