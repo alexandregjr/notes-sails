@@ -170,7 +170,7 @@
             </div>
 
             <!-- SEARCHING -->
-            <div v-if="search && filtering && filtering.length === 0" class="flex flex-wrap items-start ml-24 pt-24">
+            <div v-if="search" class="flex flex-wrap items-start ml-24 pt-24">
                 <div class="w-1/4 flex flex-col ml-5 mt-5 flex-grow">
                     <note
                         v-for="(note, index) in searching"

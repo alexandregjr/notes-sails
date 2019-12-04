@@ -72,14 +72,17 @@ new Vue({
             if (this.sortType === 'update') {
                 this.notes.sort(this.sortByUpdate)
                 this.filtering.sort(this.sortByUpdate)
+                this.searching.sort(this.sortByUpdate)
             }
             if (this.sortType === 'name') {
                 this.notes.sort(this.sortByName)
                 this.filtering.sort(this.sortByName)
+                this.searching.sort(this.sortByName)
             }
             if (this.sortType === 'type') {
                 this.notes.sort(this.sortByType)
                 this.filtering.sort(this.sortByType)
+                this.searching.sort(this.sortByType)
             }
 
             this.selectingSort = false
@@ -99,6 +102,9 @@ new Vue({
                 }
                 return false
             })
+
+            if (this.search)
+                this.searching = this.filtering.filter((item) => item.title.includes(this.search))
         },
         sortByType(a, b) {
             if (a.type > b.type)
@@ -118,8 +124,10 @@ new Vue({
             return b.updatedAt - a.updatedAt
         },
         searchByTitle() {
-            this.filtering = []
-            this.searching = this.notes.filter((item) => item.title.includes(this.search))
+            if (this.filtering.length === 0)
+                this.searching = this.notes.filter((item) => item.title.includes(this.search))
+            else
+                this.searching = this.filtering.filter((item) => item.title.includes(this.search))
         },
         async updateTags() {
             this.loading = true
